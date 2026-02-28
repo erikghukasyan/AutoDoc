@@ -1,0 +1,92 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  
+  --color-brand-50: #f0f4ff;
+  --color-brand-100: #e0e9ff;
+  --color-brand-200: #c1d3ff;
+  --color-brand-300: #92b1ff;
+  --color-brand-400: #5c85ff;
+  --color-brand-500: #2d54ff;
+  --color-brand-600: #1a36ff;
+  --color-brand-700: #0a1fff;
+  --color-brand-800: #0012e0;
+  --color-brand-900: #000fb3;
+  --color-brand-950: #000866;
+}
+
+@variant dark (&:where(.dark, .dark *));
+
+html {
+  scroll-behavior: smooth;
+}
+
+html.dark {
+  background-color: #0a0a0a;
+  color: #ffffff;
+}
+
+html.light {
+  background-color: #ffffff;
+  color: #0a0a0a;
+}
+
+body {
+  @apply antialiased text-slate-900 dark:text-slate-200;
+}
+
+.prose {
+  @apply max-w-none text-slate-600 dark:text-slate-300 leading-relaxed;
+}
+
+.prose h1, .prose h2, .prose h3 {
+  @apply text-slate-900 dark:text-white font-bold mt-8 mb-4 tracking-tight;
+}
+
+.prose h1 { @apply text-3xl; }
+.prose h2 { @apply text-2xl; }
+.prose h3 { @apply text-xl; }
+
+.prose p { @apply mb-4; }
+
+.prose ul {
+  @apply list-disc pl-6 mb-6 space-y-2;
+}
+
+.prose li { @apply pl-1; }
+
+.prose strong { @apply text-slate-900 dark:text-white font-semibold; }
+
+.prose code {
+  @apply font-mono bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded text-brand-600 dark:text-brand-300 text-sm;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-white dark:bg-[#0a0a0a];
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-200 dark:bg-[#262626];
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-slate-300 dark:bg-[#404040];
+}
+
+/* Glassmorphism */
+.glass {
+  @apply bg-slate-100/50 dark:bg-white/5 backdrop-blur-xl border border-slate-200 dark:border-white/10;
+}
+
+.glass-hover {
+  @apply hover:bg-slate-200/50 dark:hover:bg-white/10 hover:border-slate-300 dark:hover:border-white/20 transition-all duration-300;
+}
