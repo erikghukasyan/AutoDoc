@@ -124,13 +124,22 @@ export const Navbar = () => {
             )}
 
             {isAuthenticated && (
-              <button
-                onClick={logout}
-                className="p-1.5 text-slate-600 dark:text-slate-400 hover:text-red-500 dark:hover:text-red-400 transition-colors rounded-lg bg-slate-100 dark:bg-white/5 shrink-0 ml-2"
-                title={t('nav.logout')}
-              >
-                <LogOut className="w-4 h-4" />
-              </button>
+              <div className="flex items-center space-x-2 ml-2">
+                <button
+                  onClick={() => setIsProfileModalOpen(true)}
+                  className="p-1.5 text-slate-600 dark:text-slate-400 hover:text-brand-600 dark:hover:text-white transition-colors rounded-lg bg-slate-100 dark:bg-white/5 shrink-0"
+                  title={t('profile.title')}
+                >
+                  <UserIcon className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={logout}
+                  className="p-1.5 text-slate-600 dark:text-slate-400 hover:text-red-500 dark:hover:text-red-400 transition-colors rounded-lg bg-slate-100 dark:bg-white/5 shrink-0"
+                  title={t('nav.logout')}
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </div>
             )}
 
             {!isAuthenticated && (
@@ -224,6 +233,13 @@ export const Navbar = () => {
             <div className="pt-6 mt-6 border-t border-slate-200 dark:border-white/5 space-y-3">
               {isAuthenticated ? (
                 <>
+                  <button
+                    onClick={() => { setIsProfileModalOpen(true); setIsOpen(false); }}
+                    className="w-full flex items-center px-4 py-3 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 rounded-xl font-semibold transition-colors"
+                  >
+                    <UserIcon className="w-5 h-5 mr-3" />
+                    {t('profile.title')}
+                  </button>
                   <button
                     onClick={() => { logout(); setIsOpen(false); }}
                     className="w-full flex items-center px-4 py-3 text-red-500 dark:text-red-400 hover:bg-red-500/10 rounded-xl font-semibold transition-colors"
