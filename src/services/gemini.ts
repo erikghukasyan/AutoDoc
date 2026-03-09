@@ -1,6 +1,17 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
+let aiInstance: GoogleGenAI | null = null;
+
+function getAI() {
+  if (!aiInstance) {
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      throw new Error("Gemini API key is missing. Please set GEMINI_API_KEY in your environment.");
+    }
+    aiInstance = new GoogleGenAI({ apiKey });
+  }
+  return aiInstance;
+}
 
 export interface SearchResult {
   text: string;
@@ -24,7 +35,15 @@ export interface MapResult {
   places: { uri: string; title: string }[];
 }
 
+export interface AppraisalResult {
+  status: 'deal' | 'fair' | 'overpriced';
+  estimatedValue: string;
+  analysis: string;
+  confidence: number;
+}
+
 export async function searchCarProblem(problem: string): Promise<SearchResult> {
+  const ai = getAI();
   const model = "gemini-3-flash-preview";
   
   const response = await ai.models.generateContent({
@@ -33,8 +52,13 @@ export async function searchCarProblem(problem: string): Promise<SearchResult> {
       {
         role: "user",
         parts: [{ text: `Ես ունեմ հետևյալ խնդիրը իմ ավտոմեքենայի հետ: "${problem}": 
-        Խնդրում եմ բացատրել, թե ինչով կարող է պայմանավորված լինել այս խնդիրը և առաջարկել լուծումներ: 
-        Պատասխանիր հայերենով: Օգտագործիր Google Search գործիքը՝ օգտակար հղումներ գտնելու համար:` }],
+        Խնդրում եմ տրամադրել մանրամասն վերլուծություն՝
+        1. Ինչով կարող է պայմանավորված լինել այս խնդիրը (հնարավոր պատճառներ)
+        2. Ինչպես կարելի է լուծել այն (քայլ առ քայլ հրահանգներ)
+        3. Կարևոր տեղեկություններ տվյալ մեքենայի կամ համակարգի վերաբերյալ
+        4. Գտիր և տրամադրիր YouTube-ի կամ այլ օգտակար տեսանյութերի հղումներ, որոնք ցույց են տալիս լուծումը:
+        
+        Պատասխանիր հայերենով: Օգտագործիր Google Search գործիքը՝ ճշգրիտ տեղեկություններ և տեսանյութերի հղումներ գտնելու համար:` }],
       }
     ],
     config: {
@@ -54,6 +78,7 @@ export async function searchCarProblem(problem: string): Promise<SearchResult> {
 }
 
 export async function checkVin(vin: string): Promise<VinResult> {
+  const ai = getAI();
   const model = "gemini-3-flash-preview";
   
   const response = await ai.models.generateContent({
@@ -86,6 +111,7 @@ export async function checkVin(vin: string): Promise<VinResult> {
 }
 
 export async function calculateMaintenance(modelName: string, year: string, mileage: string): Promise<MaintenanceResult> {
+  const ai = getAI();
   const model = "gemini-3-flash-preview";
   
   const response = await ai.models.generateContent({
@@ -135,6 +161,7 @@ export async function calculateMaintenance(modelName: string, year: string, mile
 }
 
 export async function findNearbyServices(lat: number, lng: number): Promise<MapResult> {
+  const ai = getAI();
   const model = "gemini-2.5-flash";
   
   const response = await ai.models.generateContent({
@@ -167,4 +194,53 @@ export async function findNearbyServices(lat: number, lng: number): Promise<MapR
     })) || [];
 
   return { text, places };
+}
+
+export async function appraiseCarPrice(
+  make: string,
+  modelName: string,
+  year: string,
+  mileage: string,
+  condition: string,
+  offeredPrice: string
+): Promise<AppraisalResult> {
+  const ai = getAI();
+  const model = "gemini-3-flash-preview";
+  
+  const response = await ai.models.generateContent({
+    model,
+    contents: [
+      {
+        role: "user",
+        parts: [{ text: `Գնահատիր հետևյալ մեքենայի գինը և ասա՝ արդյոք այն արդար է, թե ոչ:
+        Մակնիշ: ${make}
+        Մոդել: ${modelName}
+        Տարեթիվ: ${year}
+        Վազք: ${mileage} կմ
+        Վիճակ: ${condition}
+        Առաջարկվող գին: $${offeredPrice}
+        
+        Վերլուծիր շուկայական միջին գները և տուր պատասխան JSON ֆորմատով:` }],
+      }
+    ],
+    config: {
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: Type.OBJECT,
+        properties: {
+          status: { type: Type.STRING, enum: ['deal', 'fair', 'overpriced'], description: "Գնի կարգավիճակը" },
+          estimatedValue: { type: Type.STRING, description: "Գնահատված շուկայական արժեքը (օրինակ՝ $15,000 - $17,000)" },
+          analysis: { type: Type.STRING, description: "Մանրամասն վերլուծություն հայերենով" },
+          confidence: { type: Type.NUMBER, description: "Վստահության մակարդակը (0-1)" }
+        },
+        required: ["status", "estimatedValue", "analysis", "confidence"]
+      }
+    }
+  });
+
+  try {
+    return JSON.parse(response.text || "{}");
+  } catch (e) {
+    throw new Error("Գնահատումը ձախողվեց:");
+  }
 }

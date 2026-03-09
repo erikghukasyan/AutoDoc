@@ -50,7 +50,7 @@ export const SearchSection = () => {
             className="inline-flex items-center px-3 py-1 rounded-full glass text-brand-400 text-sm font-medium mb-6"
           >
             <Sparkles className="w-4 h-4 mr-2" />
-            AI Powered Assistant
+            {t('search.aiPowered')}
           </motion.div>
           
           <motion.h1
@@ -124,10 +124,16 @@ export const SearchSection = () => {
                   <div className="w-10 h-10 bg-brand-500/20 rounded-lg flex items-center justify-center">
                     <Sparkles className="w-5 h-5 text-brand-500 dark:text-brand-400" />
                   </div>
-                  <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Վերլուծություն և Լուծումներ</h3>
+                  <h3 className="text-2xl font-bold text-slate-900 dark:text-white">{t('search.analysisTitle')}</h3>
                 </div>
                 <div className="prose dark:prose-invert">
-                  <ReactMarkdown>{result.text}</ReactMarkdown>
+                  <ReactMarkdown
+                    components={{
+                      img: ({ src, ...props }) => src ? <img src={src} {...props} referrerPolicy="no-referrer" /> : null
+                    }}
+                  >
+                    {result.text}
+                  </ReactMarkdown>
                 </div>
               </div>
 
@@ -135,7 +141,7 @@ export const SearchSection = () => {
                 <div className="space-y-6">
                   <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center px-4">
                     <ExternalLink className="w-5 h-5 mr-3 text-brand-500 dark:text-brand-400" />
-                    Օգտակար հղումներ
+                    {t('search.usefulLinks')}
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {result.links.map((link, idx) => (

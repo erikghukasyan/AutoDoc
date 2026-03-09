@@ -3,6 +3,9 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 interface User {
   email: string;
   name: string;
+  username?: string;
+  avatar?: string;
+  role?: 'admin' | 'user';
 }
 
 interface HistoryItem {
@@ -15,8 +18,10 @@ interface HistoryItem {
 interface AuthContextType {
   user: User | null;
   login: (email: string, name: string) => void;
+  updateUser: (data: Partial<User>) => void;
   logout: () => void;
   isAuthenticated: boolean;
+  isAdmin: boolean;
   history: HistoryItem[];
   addToHistory: (query: string, type: HistoryItem['type']) => void;
   clearHistory: () => void;
@@ -39,10 +44,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
-  const login = (email: string, name: string) => {
-    const newUser = { email, name };
-    setUser(newUser);
-    localStorage.setItem('auto_academy_user', JSON.stringify(newUser));
+  const login = async (email: string, name: string) => {
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, name }),
+      });
+      
+      if (!response.ok) throw new Error('Login failed');
+      
+      const newUser = await response.json();
+      setUser(newUser);
+      localStorage.setItem('auto_academy_user', JSON.stringify(newUser));
+    } catch (error) {
+      console.error('Login error:', error);
+      // Fallback for demo if backend is not ready
+      const isAdmin = email === 'erik.serobyan20@gmail.com';
+      const newUser: User = { 
+        email, 
+        name, 
+        username: email.split('@')[0],
+        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`,
+        role: isAdmin ? 'admin' : 'user'
+      };
+      setUser(newUser);
+      localStorage.setItem('auto_academy_user', JSON.stringify(newUser));
+    }
+  };
+
+  const updateUser = (data: Partial<User>) => {
+    if (!user) return;
+    const updatedUser = { ...user, ...data };
+    setUser(updatedUser);
+    localStorage.setItem('auto_academy_user', JSON.stringify(updatedUser));
   };
 
   const logout = () => {
@@ -70,7 +105,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user, history, addToHistory, clearHistory }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      login, 
+      updateUser, 
+      logout, 
+      isAuthenticated: !!user, 
+      isAdmin: user?.role === 'admin',
+      history, 
+      addToHistory, 
+      clearHistory 
+    }}>
       {children}
     </AuthContext.Provider>
   );

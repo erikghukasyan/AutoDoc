@@ -162,7 +162,13 @@ export const MaintenanceCalculator = () => {
 
               <div className="glass rounded-[2.5rem] p-8 md:p-12">
                 <div className="prose dark:prose-invert">
-                  <ReactMarkdown>{result.text}</ReactMarkdown>
+                  <ReactMarkdown
+                    components={{
+                      img: ({ src, ...props }) => src ? <img src={src} {...props} referrerPolicy="no-referrer" /> : null
+                    }}
+                  >
+                    {result.text}
+                  </ReactMarkdown>
                 </div>
               </div>
             </motion.div>

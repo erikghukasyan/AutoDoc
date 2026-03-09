@@ -9,15 +9,15 @@ export const ContactUs = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-20">
           <h2 className="text-4xl font-bold text-slate-900 dark:text-white tracking-tight mb-4">{t('contact.title')}</h2>
-          <p className="text-lg text-slate-600 dark:text-slate-400">Մենք միշտ պատրաստ ենք օգնել ձեզ ձեր հարցերում</p>
+          <p className="text-lg text-slate-600 dark:text-slate-400">{t('contact.subtitle')}</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-start">
           <div className="lg:col-span-2 space-y-8">
             {[
               { icon: Mail, title: t('contact.email'), value: 'support@autoacademy.am' },
-              { icon: Phone, title: 'Հեռախոս', value: '+374 10 000000' },
-              { icon: MapPin, title: 'Հասցե', value: 'Երևան, Հայաստան' }
+              { icon: Phone, title: t('contact.phone'), value: '+374 10 000000' },
+              { icon: MapPin, title: t('contact.address'), value: t('contact.location') }
             ].map((item, idx) => (
               <div key={idx} className="glass p-6 rounded-2xl flex items-start space-x-4 group">
                 <div className="w-12 h-12 bg-slate-100 dark:bg-white/5 rounded-xl flex items-center justify-center group-hover:bg-brand-500/20 transition-colors">

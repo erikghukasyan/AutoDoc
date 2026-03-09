@@ -21,13 +21,13 @@ export const AboutUs = () => {
             },
             {
               icon: Users,
-              title: 'Մեր թիմը',
-              desc: 'Մենք ավտոսիրահարների և ծրագրավորողների թիմ ենք, ովքեր հավատում են, որ տեխնոլոգիաները կարող են հեշտացնել մեքենայի սպասարկումը:',
+              title: t('about.teamTitle'),
+              desc: t('about.teamDesc'),
             },
             {
               icon: ShieldCheck,
-              title: 'Վստահելիություն',
-              desc: 'Մեր տրամադրած տեղեկատվությունը հիմնված է հազարավոր տեխնիկական աղբյուրների և արհեստական բանականության վերլուծության վրա:',
+              title: t('about.reliabilityTitle'),
+              desc: t('about.reliabilityDesc'),
             }
           ].map((item, idx) => (
             <div key={idx} className="glass p-10 rounded-[2.5rem] group hover:bg-slate-200/50 dark:hover:bg-white/10 transition-all">
