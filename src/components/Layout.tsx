@@ -12,6 +12,7 @@ export const Navbar = () => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [isLangOpen, setIsLangOpen] = React.useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = React.useState(false);
+  const [authModalTitle, setAuthModalTitle] = React.useState<string | undefined>(undefined);
   const [isProfileModalOpen, setIsProfileModalOpen] = React.useState(false);
   const location = useLocation();
   const { user, logout, isAuthenticated, isAdmin } = useAuth();
@@ -29,7 +30,8 @@ export const Navbar = () => {
 
   const currentLang = languages.find(l => l.code === language) || languages[0];
 
-  const openAuth = () => {
+  const openAuth = (title?: string) => {
+    setAuthModalTitle(title);
     setIsAuthModalOpen(true);
     setIsOpen(false);
   };
@@ -145,17 +147,17 @@ export const Navbar = () => {
             {!isAuthenticated && (
               <div className="flex items-center space-x-2 ml-2">
                 <button
-                  onClick={() => openAuth()}
+                  onClick={() => openAuth(t('nav.login'))}
                   className="px-4 py-2 bg-brand-500 text-white text-xs font-bold rounded-lg hover:bg-brand-600 transition-all active:scale-95 whitespace-nowrap"
                 >
                   {t('nav.login')}
                 </button>
-                <Link
-                  to="/admin"
+                <button
+                  onClick={() => openAuth(t('nav.adminLogin'))}
                   className="px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold rounded-lg hover:bg-slate-800 dark:hover:bg-slate-200 transition-all active:scale-95 whitespace-nowrap"
                 >
                   {t('nav.adminLogin')}
-                </Link>
+                </button>
               </div>
             )}
           </div>
@@ -251,20 +253,19 @@ export const Navbar = () => {
               ) : (
                 <>
                   <button
-                    onClick={() => openAuth()}
+                    onClick={() => openAuth(t('nav.login'))}
                     className="w-full flex items-center px-4 py-3 bg-brand-500 text-white rounded-xl font-bold transition-all shadow-lg shadow-brand-500/20"
                   >
                     <LogIn className="w-5 h-5 mr-3" />
                     {t('nav.login')}
                   </button>
-                  <Link
-                    to="/admin"
-                    onClick={() => setIsOpen(false)}
+                  <button
+                    onClick={() => openAuth(t('nav.adminLogin'))}
                     className="w-full flex items-center px-4 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-bold transition-all shadow-lg shadow-slate-900/20 dark:shadow-white/10"
                   >
                     <ShieldCheck className="w-5 h-5 mr-3" />
                     {t('nav.adminLogin')}
-                  </Link>
+                  </button>
                 </>
               )}
             </div>
@@ -275,6 +276,7 @@ export const Navbar = () => {
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
+        title={authModalTitle}
       />
 
       <ProfileModal

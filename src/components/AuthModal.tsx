@@ -8,9 +8,10 @@ import { useLanguage } from '../context/LanguageContext';
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
+  title?: string;
 }
 
-export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
+export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, title }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -73,7 +74,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             <div className="p-8 sm:p-10">
               <div className="flex justify-between items-center mb-10">
                 <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
-                  {t('auth.login')}
+                  {title || t('auth.login')}
                 </h2>
                 <button
                   onClick={onClose}
